@@ -4,7 +4,7 @@
 
 ## Description
 ​
-The purpose of this project is to complete a quiz application through the use of MONGODB and NOSQL.
+The purpose of this project is to complete a backend application through the use of MONGODB and NOSQL.
 
 ​
 ## Table of Contents
