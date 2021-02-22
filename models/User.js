@@ -1,31 +1,28 @@
 const { Schema, model, Types } = require('mongoose');
 const moment = require('moment');
-const Thought = require('./Thought.js');
 
 
-const UserSchema = new Schema
+//Setup for Insomnia entries
+const UserInsomnia = new Schema
 (
   {
-    // userId: {//creating custom id to avoid confusion with parent comment id
-    //   type: Schema.Types.ObjectId,
-    //   default: () => new Types.ObjectId()
-    // },
     username: {
       type: String,
       unique: [true, 'username must not match one already created'],
-      required: 'username is required',
+      required: 'must enter a valid username',
       trim: true
     },
     email: {
       type: String,
-      unique: [true, 'email must not match one already created'], 
-      required: [ true, 'email is required' ],
-      //match: regex here
+      unique: [true, 'email needs to match'], 
+      required: [ true, 'email required' ],
+      
+     //Regex
       validate: {
         validator: (email) => {
           return /[a-zA-z0-9]+@.+\..+/i.test(email);
         },
-        message: props => `${props.value} is not a valid email address format. Should be similar to 'example2@mail.com' and contain only english letters and/or numbers`
+        message: props => `${props.value}  email not valid`
       }
     },
     thoughts: [
@@ -43,7 +40,7 @@ const UserSchema = new Schema
     memberSince: {
       type: Date,
       default: Date.now,
-      get: memberSinceVal => moment(memberSinceVal).format('MMM DD YYYY')
+      get: membership => moment(membership).format('MMM DD YYYY')
     }
   },
   {
@@ -55,19 +52,27 @@ const UserSchema = new Schema
   }
 );
 
-//friend count virtual
-UserSchema.virtual('friendCount')
+
+
+
+
+UserInsomnia.virtual('friendsCounter')
 .get(function() {
   return this.friends.length;
 });
 
-//thought count virtual
-UserSchema.virtual('thoughtCount')
+
+UserInsomnia.virtual('thoughtsCounter')
 .get(function() {
   return this.thoughts.length;
 });
 
-const User = model('User', UserSchema);
+
+
+
+
+
+const User = model('User', UserInsomnia);
 
 module.exports = User;
 

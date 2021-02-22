@@ -9,8 +9,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(routes);
 
-//connect to db
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/social-network', {
+
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/the-social-network', {
   useFindAndModify: false,
   useNewUrlParser: true,
   useUnifiedTopology: true

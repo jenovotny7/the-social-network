@@ -1,19 +1,23 @@
 const { User, Thought } = require('../models');
 const db = require('../models');
 
-const userController = {
+const userCtrl = {
   //get all users
   getAllUsers(req, res) {
     console.log(req.path);
+
+
     User.find()
     .select('-__v')
-    .then(dbUserData => res.json(dbUserData))
+    .then(dbUser => res.json(dbUser))
     .catch(e => { console.log(e); res.status(500).json(e) });
   },
 
   //get a user by id
   getUserById(req, res) {
     console.log(req.params);
+
+
     User.findOne
     (
       {
@@ -33,24 +37,23 @@ const userController = {
       }
     )
     .select('-__v')
-    .then(dbUserData => {
-      if (!dbUserData) {
-        return res.status(404).json({message: `no user found with the id of ${req.params.id}`})
+    .then(dbUser => {
+      if (!dbUser) {
+        return res.status(404).json({message: `user na- ${req.params.id}`})
       }
-      res.status(200).json(dbUserData);
+      res.status(200).json(dbUser);
     })
-    .catch(e => { console.log(e); res.status(500).json(e) });
+    .catch(e => { console.log(e); res.status(555).json(e) });
   },
-  //create a user
-  createUser(req, res) {
+  //create  user
+  newUser(req, res) {
     User.create(req.body)
-    .then(dbUserData => res.json(dbUserData))
-    .catch(e => { console.log(e); res.status(500).json(e) });
+    .then(dbUser => res.json(dbUser))
+    .catch(e => { console.log(e); res.status(525).json(e) });
   },
   //update a user: find by id and update
-  updateUser(req, res) {
-    console.log(req.params);
-    console.log(req.body);
+  userUpdate(req, res) {
+   
     User.findOneAndUpdate
     (
       { _id: req.params.id },
@@ -73,19 +76,16 @@ const userController = {
     console.log(req.body)
     console.log(req.params);
     try {
-      // find and delete all those thoughts that match with the username in the req.body 
+      
       const deletedThoughts = await Thought.deleteMany
       (
         { username: req.body.username }
       );
       console.log(deletedThoughts);
-      //find all users that have this user on deck for deletion in their friends list
-      // and update the queried users' friendslists to not include the deleted user's id
+      
       const deletedFriend = await User.updateMany
       (
-        //get all users
         {},
-        //pull friend Id from all users that have that friend id in their friends array
         {
           $pull: {
             friends: req.params.id
@@ -98,19 +98,18 @@ const userController = {
       (
         { _id: req.params.id }
       );
-      console.log(deletedUser);
       if (!deletedUser) {
-        res.status(404).json({message: `no user found with the id of ${req.params.id}`});
+        res.status(404).json({message: `user not found`});
       }
-      res.status(200).json({message: `the user ${req.body.username} and their thoughts have been deleted.`});
+      res.status(200).json({message: `user thoughts removed`});
     } catch (error) {
       console.log(error);
-      res.status(500).json(error);
+      res.status(555).json(error);
     }
   },
-  //add friend method
-  //like an update method
-  addFriend(req, res) {
+  
+
+  followRequest(req, res) {
     console.log(req.params);
     User.findOneAndUpdate
     (
@@ -118,17 +117,17 @@ const userController = {
       { $push: { friends: req.params.friendId } },//parameter containing friendId
       { new: true }
     )
-    .then(dbUserData => {
-      if (!dbUserData) {
-        res.status(404).json({message: `no user found with the id of ${req.params.id}`});
+    .then(dbUser => {
+      if (!dbUser) {
+        res.status(404).json({message: `no user found`});
       }
       res.status(200).json(dbUserData);
     })
-    .catch(e => { console.log(e); res.status(500).json(e); });
+    .catch(e => { console.log(e); res.status(565).json(e); });
   },
 
-  //delete friend method
-  deleteFriend(req, res) {
+  //delete friend 
+  block(req, res) {
     console.log(req.params);
     User.findOneAndUpdate
     (
@@ -136,14 +135,14 @@ const userController = {
       { $pull: { friends: req.params.friendId } },
       { new: true }
     )
-    .then(dbUserData => {
-      if (!dbUserData) {
-        res.status(404).json({message: `no user found with the id of ${req.params.id}`});
+    .then(dbUser => {
+      if (!dbUser) {
+        res.status(404).json({message: `user not found`});
       }
-      res.status(200).json(dbUserData);
+      res.status(212).json(dbUser);
     })
-    .catch(e => { console.log(e); res.status(500).json(e); });
+    .catch(e => { console.log(e); res.status(575).json(e); });
   }
 };
 
-module.exports = userController;
+module.exports = userCtrl;
